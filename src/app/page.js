@@ -1,101 +1,119 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import PageWrapper from "@/components/PageWrapper";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.15, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <PageWrapper>
+      <div style={{ paddingTop: "2rem" }}>
+        {/* Headline */}
+        <motion.h1
+          className="page-title"
+          style={{ fontSize: "1.65rem", lineHeight: 1.35, marginBottom: "1.5rem" }}
+          custom={0}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          You don&apos;t have to hold everything together here.
+        </motion.h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* Subtext */}
+        <motion.div
+          className="page-intro"
+          style={{ marginBottom: "2.5rem" }}
+          custom={1}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <p style={{ marginBottom: "0.75rem" }}>
+            There are places where you&apos;re expected to explain yourself, defend your
+            silence, or pretend you&apos;re fine.
+          </p>
+          <p style={{ marginBottom: "0.75rem" }}>This isn&apos;t one of them.</p>
+          <p>
+            You don&apos;t owe this space strength. Just presence.
+          </p>
+        </motion.div>
+
+        {/* Buttons */}
+        <motion.div
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <Link href="/mood" style={{ textDecoration: "none" }}>
+            <button className="btn-primary" style={{ width: "100%" }}>
+              Enter Quiet Mode
+            </button>
+          </Link>
+
+          <Link href="/roast" style={{ textDecoration: "none" }}>
+            <button className="btn-secondary" style={{ width: "100%" }}>
+              Roast Mode 🔥
+            </button>
+          </Link>
+
+          <Link href="/brain-break" style={{ textDecoration: "none" }}>
+            <button className="btn-secondary" style={{ width: "100%" }}>
+              Brain Break
+            </button>
+          </Link>
+        </motion.div>
+
+        {/* Small footer line */}
+        <motion.p
+          style={{
+            textAlign: "center",
+            fontSize: "0.78rem",
+            color: "rgba(46, 46, 46, 0.4)",
+            marginTop: "3rem",
+            lineHeight: 1.6,
+            fontStyle: "italic",
+          }}
+          custom={3}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          Stay for a minute. Leave whenever you want. Nothing is demanded.
+        </motion.p>
+
+        {/* Hidden page link */}
+        <motion.div
+          style={{ textAlign: "center", marginTop: "2rem" }}
+          custom={4}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <Link
+            href="/hidden"
+            style={{
+              fontSize: "0.72rem",
+              color: "rgba(46, 46, 46, 0.25)",
+              textDecoration: "none",
+              transition: "color 0.3s ease",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            Not Important.
+          </Link>
+        </motion.div>
+      </div>
+    </PageWrapper>
   );
 }

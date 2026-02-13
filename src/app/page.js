@@ -45,7 +45,7 @@ export default function Home() {
     setRipple({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     setTimeout(() => setRipple(null), 600);
     setIsExiting(true);
-    setTimeout(() => router.push("/mood"), 650);
+    setTimeout(() => router.push("/home"), 650);
   };
 
   /* ── Build word delays ── */

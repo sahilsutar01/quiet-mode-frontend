@@ -1,6 +1,5 @@
 import "./globals.css";
-import { Playfair_Display, Inter } from "next/font/google";
-import BottomNav from "@/components/BottomNav";
+import { Playfair_Display, Inter, Great_Vibes } from "next/font/google";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 
 const playfair = Playfair_Display({
@@ -17,6 +16,13 @@ const inter = Inter({
   weight: ["300", "400", "500", "600"],
 });
 
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  variable: "--font-script",
+  display: "swap",
+  weight: ["400"],
+});
+
 export const metadata = {
   title: "Quiet Mode",
   description:
@@ -31,11 +37,10 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${greatVibes.variable}`}>
       <body>
         {children}
         <GlobalAudioPlayer />
-        <BottomNav />
       </body>
     </html>
   );

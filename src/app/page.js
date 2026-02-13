@@ -1,119 +1,258 @@
 "use client";
 
-import Link from "next/link";
-import PageWrapper from "@/components/PageWrapper";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import RosePetalCanvas from "@/components/RosePetalCanvas";
+import GlassPanels from "@/components/GlassPanels";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+/* ── Headline lines ── */
+const headlineLines = [
+  "You don\u2019t have to hold",
+  "everything together here.",
+];
+const closerLines = [
+  "You\u2019ve carried enough.",
+  "Let this be lighter.",
+];
+
+/* ── Word animation variant ── */
+const wordVariant = {
+  hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
+  visible: (d) => ({
+    opacity: 1, y: 0, filter: "blur(0px)",
+    transition: { delay: d, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
+const fadeVariant = {
+  hidden: { opacity: 0, y: 14 },
+  visible: (d) => ({
+    opacity: 1, y: 0,
+    transition: { delay: d, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
+/* ── Ambient sound ── */
+function useAmbientSound() {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") setReady(true);
+  }, []);
+
+  const toggle = () => {
+    if (!audioRef.current) {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const bufferSize = ctx.sampleRate * 4;
+      const buffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
+      for (let ch = 0; ch < 2; ch++) {
+        const data = buffer.getChannelData(ch);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.015;
+      }
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 400;
+      filter.Q.value = 0.7;
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      source.start();
+      audioRef.current = { ctx, gain, source };
+      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.5);
+      setPlaying(true);
+    } else if (playing) {
+      const { gain, ctx } = audioRef.current;
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
+      setPlaying(false);
+    } else {
+      const { gain, ctx } = audioRef.current;
+      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1);
+      setPlaying(true);
+    }
+  };
+
+  return { playing, toggle, ready };
+}
+
 export default function Home() {
+  const router = useRouter();
+  const [isExiting, setIsExiting] = useState(false);
+  const [ripple, setRipple] = useState(null);
+  const { playing, toggle: toggleSound, ready: soundReady } = useAmbientSound();
+
+  const handleCTA = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setRipple({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setTimeout(() => setRipple(null), 600);
+    setIsExiting(true);
+    setTimeout(() => router.push("/mood"), 650);
+  };
+
+  /* ── Build word delays ── */
+  let t = 0.8;
+  const mainDelays = headlineLines.map((line) =>
+    line.split(" ").map(() => { const d = t; t += 0.07; return d; })
+  );
+  const closerDelay = t + 0.3;
+
   return (
-    <PageWrapper>
-      <div style={{ paddingTop: "2rem" }}>
-        {/* Headline */}
-        <motion.h1
-          className="page-title"
-          style={{ fontSize: "1.65rem", lineHeight: 1.35, marginBottom: "1.5rem" }}
-          custom={0}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-        >
-          You don&apos;t have to hold everything together here.
-        </motion.h1>
-
-        {/* Subtext */}
+    <AnimatePresence mode="wait">
+      {!isExiting ? (
         <motion.div
-          className="page-intro"
-          style={{ marginBottom: "2.5rem" }}
-          custom={1}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
+          key="landing"
+          className="landing-hero"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p style={{ marginBottom: "0.75rem" }}>
-            There are places where you&apos;re expected to explain yourself, defend your
-            silence, or pretend you&apos;re fine.
-          </p>
-          <p style={{ marginBottom: "0.75rem" }}>This isn&apos;t one of them.</p>
-          <p>
-            You don&apos;t owe this space strength. Just presence.
-          </p>
-        </motion.div>
-
-        {/* Buttons */}
-        <motion.div
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          custom={2}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-        >
-          <Link href="/mood" style={{ textDecoration: "none" }}>
-            <button className="btn-primary" style={{ width: "100%" }}>
-              Enter Quiet Mode
-            </button>
-          </Link>
-
-          <Link href="/roast" style={{ textDecoration: "none" }}>
-            <button className="btn-secondary" style={{ width: "100%" }}>
-              Roast Mode 🔥
-            </button>
-          </Link>
-
-          <Link href="/brain-break" style={{ textDecoration: "none" }}>
-            <button className="btn-secondary" style={{ width: "100%" }}>
-              Brain Break
-            </button>
-          </Link>
-        </motion.div>
-
-        {/* Small footer line */}
-        <motion.p
-          style={{
-            textAlign: "center",
-            fontSize: "0.78rem",
-            color: "rgba(46, 46, 46, 0.4)",
-            marginTop: "3rem",
-            lineHeight: 1.6,
-            fontStyle: "italic",
-          }}
-          custom={3}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-        >
-          Stay for a minute. Leave whenever you want. Nothing is demanded.
-        </motion.p>
-
-        {/* Hidden page link */}
-        <motion.div
-          style={{ textAlign: "center", marginTop: "2rem" }}
-          custom={4}
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-        >
-          <Link
-            href="/hidden"
-            style={{
-              fontSize: "0.72rem",
-              color: "rgba(46, 46, 46, 0.25)",
-              textDecoration: "none",
-              transition: "color 0.3s ease",
-            }}
+          {/* Slow cinematic zoom on the whole hero */}
+          <motion.div
+            className="landing-zoom-layer"
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.02 }}
+            transition={{ duration: 20, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
           >
-            Not Important.
-          </Link>
+            <div className="landing-gradient" />
+          </motion.div>
+
+          <div className="landing-grain" />
+          <div className="landing-vignette" />
+
+          {/* Radial glow behind headline */}
+          <motion.div
+            className="landing-glow"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+          />
+
+          <GlassPanels />
+          <RosePetalCanvas fadeOut={isExiting} startDelay={1500} />
+
+          {/* ── Content ── */}
+          <div className="landing-content">
+            {/* ── Main headline: word-by-word ── */}
+            <div className="landing-headline">
+              {headlineLines.map((line, li) => (
+                <div key={li} className="landing-headline-line">
+                  {line.split(" ").map((word, wi) => (
+                    <motion.span
+                      key={wi}
+                      className="landing-word"
+                      custom={mainDelays[li][wi]}
+                      initial="hidden"
+                      animate="visible"
+                      variants={wordVariant}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* ── Closer lines: softer, italic ── */}
+            <motion.div
+              className="landing-closer"
+              custom={closerDelay}
+              initial="hidden"
+              animate="visible"
+              variants={fadeVariant}
+            >
+              {closerLines.map((line, i) => (
+                <div key={i} className="landing-closer-line">{line}</div>
+              ))}
+            </motion.div>
+
+            {/* Brand mark */}
+            <motion.div
+              className="brand-mark"
+              custom={closerDelay + 0.5}
+              initial="hidden"
+              animate="visible"
+              variants={fadeVariant}
+            >
+              <svg width="26" height="26" viewBox="0 0 100 100" fill="none"
+                xmlns="http://www.w3.org/2000/svg" className="brand-rose-icon">
+                <path d="M50 15C50 15 35 25 30 40C25 55 35 70 50 75C65 70 75 55 70 40C65 25 50 15 50 15Z"
+                  stroke="rgba(255,255,255,0.8)" strokeWidth="2" fill="none" />
+                <path d="M50 30C50 30 42 38 40 48C38 58 44 65 50 68C56 65 62 58 60 48C58 38 50 30 50 30Z"
+                  stroke="rgba(255,255,255,0.55)" strokeWidth="1.5" fill="none" />
+                <path d="M50 42C50 42 46 47 45 52C44 57 47 60 50 62C53 60 56 57 55 52C54 47 50 42 50 42Z"
+                  stroke="rgba(255,255,255,0.35)" strokeWidth="1" fill="none" />
+                <line x1="50" y1="75" x2="50" y2="92" stroke="rgba(255,255,255,0.55)" strokeWidth="1.5" />
+                <path d="M50 82C50 82 42 78 38 82" stroke="rgba(255,255,255,0.35)" strokeWidth="1" fill="none" />
+              </svg>
+              <span className="brand-text">Quiet Mode</span>
+            </motion.div>
+
+            {/* CTA */}
+            <motion.button
+              className="glass-cta"
+              custom={closerDelay + 0.7}
+              initial="hidden"
+              animate="visible"
+              variants={fadeVariant}
+              onClick={handleCTA}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <span className="cta-shimmer" />
+              Begin Your Journey
+              {ripple && (
+                <span className="cta-ripple" style={{ left: ripple.x, top: ripple.y }} />
+              )}
+            </motion.button>
+          </div>
+
+          {/* Ambient toggle */}
+          {soundReady && (
+            <motion.button
+              className="ambient-toggle"
+              onClick={toggleSound}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3, duration: 0.8 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              title={playing ? "Mute ambient" : "Play ambient"}
+            >
+              {playing ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </svg>
+              )}
+            </motion.button>
+          )}
         </motion.div>
-      </div>
-    </PageWrapper>
+      ) : (
+        <motion.div
+          key="exit"
+          className="landing-hero"
+          initial={{ opacity: 1, scale: 1 }}
+          animate={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="landing-gradient" />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

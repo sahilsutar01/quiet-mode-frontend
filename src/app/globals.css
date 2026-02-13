@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,6 +10,8 @@
   --soft-sage: #C8D5B9;
   --charcoal: #2E2E2E;
   --card-radius: 22px;
+  --font-serif: var(--font-playfair), 'Georgia', 'Times New Roman', serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -23,13 +23,389 @@ html {
 }
 
 body {
-  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans);
   color: var(--charcoal);
   background: var(--warm-beige);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ═══════════════════════════════════════════
+   LANDING PAGE — PREMIUM GLASSMORPHISM HERO
+   ═══════════════════════════════════════════ */
+
+.landing-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cinematic slow zoom wrapper */
+.landing-zoom-layer {
+  position: fixed;
+  top: -2%;
+  left: -2%;
+  width: 104%;
+  height: 104%;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* Animated gradient background */
+.landing-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(185, 145, 158, 0.85) 0%, transparent 42%),
+    radial-gradient(ellipse at 72% 45%, rgba(210, 170, 182, 0.7) 0%, transparent 48%),
+    radial-gradient(ellipse at 48% 82%, rgba(195, 178, 205, 0.5) 0%, transparent 42%),
+    radial-gradient(ellipse at 50% 95%, rgba(80, 55, 68, 0.2) 0%, transparent 40%),
+    linear-gradient(155deg, #A8838E 0%, #BF9BA6 18%, #D4B0BC 36%, #DEC0CC 52%, #CEBDD0 72%, #BFB0C6 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+
+  25% {
+    background-position: 40% 25%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  75% {
+    background-position: 25% 75%;
+  }
+}
+
+/* Grain texture overlay */
+.landing-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* Vignette — warm dark edges + bottom darkening */
+.landing-vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent 60%, rgba(50, 30, 40, 0.15) 100%),
+    radial-gradient(ellipse at center, transparent 28%, rgba(100, 65, 78, 0.2) 65%, rgba(60, 35, 48, 0.4) 100%);
+}
+
+/* Radial glow behind headline */
+.landing-glow {
+  position: fixed;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(230, 200, 215, 0.22) 0%, transparent 70%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  .landing-glow {
+    top: 35%;
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Glass panel floating animation */
+.glass-panel-float {
+  animation: glassFloat 8s ease-in-out infinite;
+}
+
+@keyframes glassFloat {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Glass shimmer sweep */
+.glass-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(105deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.06) 60%,
+      transparent 100%);
+  animation: shimmerSweep 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmerSweep {
+
+  0%,
+  85%,
+  100% {
+    left: -100%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  40% {
+    left: 200%;
+    opacity: 1;
+  }
+
+  50% {
+    left: 200%;
+    opacity: 0;
+  }
+}
+
+/* ── Content container ── */
+.landing-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1.75rem;
+  padding-top: 18vh;
+  padding-bottom: 5rem;
+  max-width: 540px;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (min-width: 640px) {
+  .landing-content {
+    padding-top: 0;
+    padding-bottom: 2rem;
+    min-height: auto;
+  }
+}
+
+/* ── Headline ── */
+.landing-headline {
+  margin-bottom: 2rem;
+}
+
+.landing-headline-line {
+  display: block;
+  line-height: 1.2;
+  margin-bottom: 0.15em;
+}
+
+/* FIX: word spacing via margin-right on inline-block spans */
+.landing-word {
+  display: inline-block;
+  margin-right: 0.28em;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 8.5vw, 3.2rem);
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.005em;
+  text-shadow:
+    0 2px 14px rgba(255, 255, 255, 0.18),
+    0 0 28px rgba(170, 120, 140, 0.22);
+}
+
+.landing-word:last-child {
+  margin-right: 0;
+}
+
+/* ── Closer lines (softer, italic, smaller) ── */
+.landing-closer {
+  margin-bottom: 2.2rem;
+}
+
+.landing-closer-line {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 4vw, 1.45rem);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Brand mark ── */
+.brand-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 2.5rem;
+}
+
+.brand-rose-icon {
+  opacity: 0.75;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.12));
+}
+
+.brand-text {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.2em;
+}
+
+/* ── CTA button ── */
+.glass-cta {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-shadow: 0 1px 6px rgba(255, 255, 255, 0.12);
+}
+
+.glass-cta:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.1),
+    0 8px 30px rgba(170, 120, 140, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* CTA border shimmer */
+.cta-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent);
+  animation: ctaShimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ctaShimmer {
+
+  0%,
+  80%,
+  100% {
+    left: -100%;
+  }
+
+  30% {
+    left: 200%;
+  }
+}
+
+/* CTA ripple */
+.cta-ripple {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%) scale(0);
+  animation: rippleOut 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleOut {
+  to {
+    transform: translate(-50%, -50%) scale(20);
+    opacity: 0;
+  }
+}
+
+/* ── Ambient sound toggle ── */
+.ambient-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ambient-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* ═══════════════════════════════════
+   OTHER PAGES — EXISTING STYLES
+   ═══════════════════════════════════ */
 
 /* Desktop blurred gradient background */
 @media (min-width: 481px) {
@@ -140,7 +516,7 @@ body {
   border: 1px solid rgba(216, 167, 177, 0.2);
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(8px);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.95rem;
   color: var(--charcoal);
   resize: vertical;
@@ -166,7 +542,7 @@ body {
   border-radius: 14px;
   border: 1px solid rgba(216, 167, 177, 0.2);
   background: rgba(255, 255, 255, 0.6);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   color: var(--charcoal);
   outline: none;
@@ -187,7 +563,7 @@ body {
 
 /* Page title */
 .page-title {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-serif);
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--charcoal);
@@ -334,7 +710,7 @@ body {
   border-radius: 14px;
   border: 1px solid rgba(216, 167, 177, 0.2);
   background: rgba(255, 255, 255, 0.6);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.9rem;
   color: var(--charcoal);
   outline: none;
@@ -352,7 +728,7 @@ body {
 }
 
 .stat-number {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
   color: var(--dusty-rose);

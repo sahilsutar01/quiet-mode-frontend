@@ -1055,6 +1055,8 @@ body {
   position: relative;
   overflow-x: hidden;
   background: transparent;
+  isolation: isolate;
+  /* Create a new stacking context */
 }
 
 /* Backgrounds - Constrained to container */

@@ -51,7 +51,7 @@ export default function RoastPage() {
             overflow: "hidden"
         }}>
             <div className="app-container" style={{
-                padding: "1rem 1.5rem",
+                padding: "1rem 1.5rem 2.5rem",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
